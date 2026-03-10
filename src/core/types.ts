@@ -21,4 +21,19 @@ export interface FileAnalysisResult {
   ambiguousChars: string[];
   canDisplay: boolean;
   reason?: string;
-} 
+}
+
+export interface ParseStats {
+  totalFiles: number;
+  processedFiles: number;
+  skippedBinary: number;
+  totalChars: number;
+  estimatedTokens: number;
+  elapsedMs: number;
+}
+
+export interface ParseResult {
+  report: string;
+  stats: ParseStats;
+  cancelled: boolean;
+}

@@ -90,3 +90,6 @@ typings/
 
 # Electron-Forge
 out/
+
+# VS Code test
+.vscode-test/

@@ -1,8 +1,9 @@
 {
   "name": "acto",
-  "displayName": "ACTO_EXT",
-  "description": "test",
-  "version": "0.0.1",
+  "displayName": "ACTO",
+  "description": "Собирает выбранные файлы проекта в единый текстовый отчёт — удобно при работе с LLM.",
+  "version": "1.0.0",
+  "publisher": "acto-dev",
   "engines": {
     "vscode": "^1.101.0"
   },
@@ -19,6 +20,11 @@
         "icon": "$(play-circle)"
       },
       {
+        "command": "acto.copyToClipboard",
+        "title": "ACTO: Скопировать в буфер обмена",
+        "icon": "$(clippy)"
+      },
+      {
         "command": "acto.toggleCheckbox",
         "title": "Toggle Checkbox"
       },
@@ -33,59 +39,77 @@
         "icon": "$(clear-all)"
       },
       {
-        "command": "acto.pauseParsing",
-        "title": "Пауза парсинга",
-        "icon": "$(debug-pause)"
-      },
-      {
-        "command": "acto.resumeParsing",
-        "title": "Продолжить парсинг",
-        "icon": "$(debug-continue)"
-      },
-      {
         "command": "acto.stopParsing",
         "title": "Остановить парсинг",
         "icon": "$(debug-stop)"
+      },
+      {
+        "command": "acto.refreshTree",
+        "title": "Обновить дерево",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "acto.openSettings",
+        "title": "ACTO: Настройки",
+        "icon": "$(settings-gear)"
+      },
+      {
+        "command": "acto.revealInExplorer",
+        "title": "Показать в проводнике"
+      },
+      {
+        "command": "acto.addToIgnored",
+        "title": "ACTO: Игнорировать"
       }
     ],
     "menus": {
       "view/title": [
         {
           "command": "acto.parseSelected",
-          "when": "view == acto-project-tree",
-          "group": "navigation"
-        },
-        {
-          "command": "acto.selectAll",
-          "when": "view == acto-project-tree",
+          "when": "view == acto-project-tree && !acto.isParsing",
           "group": "navigation@1"
         },
         {
-          "command": "acto.deselectAll",
-          "when": "view == acto-project-tree",
+          "command": "acto.copyToClipboard",
+          "when": "view == acto-project-tree && !acto.isParsing && acto.hasSelection",
           "group": "navigation@2"
         },
         {
-          "command": "acto.pauseParsing",
-          "when": "view == acto-project-tree",
+          "command": "acto.selectAll",
+          "when": "view == acto-project-tree && !acto.isParsing",
           "group": "navigation@3"
         },
         {
-          "command": "acto.resumeParsing",
-          "when": "view == acto-project-tree",
+          "command": "acto.deselectAll",
+          "when": "view == acto-project-tree && !acto.isParsing",
           "group": "navigation@4"
         },
         {
-          "command": "acto.stopParsing",
-          "when": "view == acto-project-tree",
+          "command": "acto.refreshTree",
+          "when": "view == acto-project-tree && !acto.isParsing",
           "group": "navigation@5"
+        },
+        {
+          "command": "acto.openSettings",
+          "when": "view == acto-project-tree && !acto.isParsing",
+          "group": "navigation@6"
+        },
+        {
+          "command": "acto.stopParsing",
+          "when": "view == acto-project-tree && acto.isParsing",
+          "group": "navigation"
         }
       ],
       "view/item/context": [
         {
-          "command": "acto.toggleCheckbox",
+          "command": "acto.revealInExplorer",
           "when": "view == acto-project-tree",
-          "group": "inline"
+          "group": "navigation@1"
+        },
+        {
+          "command": "acto.addToIgnored",
+          "when": "view == acto-project-tree",
+          "group": "2_acto@1"
         }
       ]
     },
@@ -93,7 +117,7 @@
       "activitybar": [
         {
           "id": "acto-parser-container",
-          "title": "ACTO Parser",
+          "title": "ACTO",
           "icon": "$(file-code)"
         }
       ]
@@ -103,9 +127,36 @@
         {
           "id": "acto-project-tree",
           "name": "Файлы для парсинга",
-          "type": "tree"
+          "type": "tree",
+          "contextualTitle": "ACTO"
         }
       ]
+    },
+    "configuration": {
+      "title": "ACTO",
+      "properties": {
+        "acto.ignoredNames": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [
+            "node_modules",
+            ".git",
+            "dist",
+            "out",
+            "build",
+            ".vscode",
+            "__pycache__",
+            ".next",
+            ".nuxt",
+            ".turbo",
+            "coverage",
+            ".nyc_output",
+            ".DS_Store",
+            "output.txt"
+          ],
+          "markdownDescription": "Имена папок и файлов, которые **не отображаются** в дереве и **не попадают** в отчёт. Можно добавить свои или удалить дефолтные значения."
+        }
+      }
     }
   },
   "scripts": {
@@ -125,7 +176,6 @@
   "dependencies": {
     "iconv-lite": "^0.6.3"
   },
-  "icon": "icon.png",
   "devDependencies": {
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
