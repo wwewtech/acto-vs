@@ -52,6 +52,9 @@ typings/
 dist/
 out/
 
+# VS Code workspace settings
+.vscode/
+
 # VS Code test runner
 .vscode-test/
 
