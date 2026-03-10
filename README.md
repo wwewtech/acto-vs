@@ -1,33 +1,44 @@
-# acto README
+# ACTO — Code Context Collector
 
-This is the README for your extension "acto". After writing up a brief description, we recommend including the following sections.
+Расширение VS Code, которое собирает выбранные файлы проекта в единый текстовый отчёт.  
+Удобно при работе с LLM (ChatGPT, Claude и т.д.) — вы передаёте весь нужный контекст одним файлом.
 
-## Features
+## Возможности
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- **Дерево файлов** в боковой панели с чекбоксами для каждого файла и папки
+- **Каскадное выделение** — клик на папке отмечает все вложенные файлы
+- **«Выделить всё» / «Снять выделение»** — кнопки на панели инструментов
+- **Автоматический пропуск бинарных файлов** (изображения, `.exe`, архивы и т.д.)
+- **Автоматический пропуск** `node_modules`, `.git`, `dist`, `out` и других служебных папок
+- **Остановка** сбора в любой момент — частичный результат всё равно сохраняется
+- Результат открывается в редакторе автоматически
 
-For example if there is an image subfolder under your extension project workspace:
+## Использование
 
-\!\[feature X\]\(images/feature-x.png\)
+1. Откройте папку проекта в VS Code
+2. Нажмите иконку **ACTO** на панели активности (Activity Bar)
+3. Отметьте чекбоксами нужные файлы и/или папки
+4. Нажмите кнопку **▶ (Собрать отчёт)** на панели инструментов
+5. Файл `output.txt` откроется в соседней вкладке — скопируйте содержимое в LLM
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## Команды
 
-## Requirements
+| Команда | Описание |
+|---|---|
+| ACTO: Собрать отчёт | Запускает сбор выбранных файлов |
+| Выделить все | Отмечает все файлы проекта |
+| Снять выделение | Снимает все отметки |
+| Остановить парсинг | Прерывает текущий сбор |
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+## Требования
 
-## Extension Settings
+VS Code версии `1.101.0` или новее.
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+## Известные ограничения
 
-For example:
+- Файл `output.txt` всегда сохраняется в корне открытого workspace
+- Кодировка результата — UTF-8
 
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
 
 Calling out known issues can help limit users opening duplicate issues against your extension.
 
