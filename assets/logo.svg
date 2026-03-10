@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+
+    <!-- Background: deep dark, radial highlight in center -->
+    <radialGradient id="bg" cx="50%" cy="48%" r="70%">
+      <stop offset="0%"   stop-color="#1c1040"/>
+      <stop offset="100%" stop-color="#06050f"/>
+    </radialGradient>
+
+    <!-- A stroke: indigo (bottom) → cyan (top) -->
+    <linearGradient id="aCol" gradientUnits="userSpaceOnUse" x1="100" y1="160" x2="100" y2="34">
+      <stop offset="0%"   stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+
+    <!-- Soft blur for glow layers -->
+    <filter id="blur" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+
+    <!-- Stronger blur for apex halo -->
+    <filter id="halo" x="-150%" y="-150%" width="400%" height="400%">
+      <feGaussianBlur stdDeviation="10"/>
+    </filter>
+
+  </defs>
+
+  <!-- ── Background ── -->
+  <rect width="200" height="200" rx="38" fill="url(#bg)"/>
+  <!-- Subtle inner border -->
+  <rect width="200" height="200" rx="38" fill="none"
+        stroke="#06b6d4" stroke-width="1.5" opacity="0.14"/>
+
+  <!-- ── Decorative code lines (left of left leg) ── -->
+  <g fill="#6366f1">
+    <rect x="16" y="89"  width="30" height="2.2" rx="1.1" opacity="0.18"/>
+    <rect x="16" y="99"  width="21" height="2.2" rx="1.1" opacity="0.14"/>
+    <rect x="16" y="109" width="27" height="2.2" rx="1.1" opacity="0.17"/>
+    <rect x="16" y="119" width="16" height="2.2" rx="1.1" opacity="0.12"/>
+    <rect x="16" y="129" width="23" height="2.2" rx="1.1" opacity="0.15"/>
+    <rect x="16" y="139" width="19" height="2.2" rx="1.1" opacity="0.13"/>
+  </g>
+
+  <!-- ── Decorative code lines (right of right leg) ── -->
+  <g fill="#6366f1">
+    <rect x="154" y="89"  width="30" height="2.2" rx="1.1" opacity="0.18"/>
+    <rect x="163" y="99"  width="21" height="2.2" rx="1.1" opacity="0.14"/>
+    <rect x="157" y="109" width="27" height="2.2" rx="1.1" opacity="0.17"/>
+    <rect x="168" y="119" width="16" height="2.2" rx="1.1" opacity="0.12"/>
+    <rect x="161" y="129" width="23" height="2.2" rx="1.1" opacity="0.15"/>
+    <rect x="165" y="139" width="19" height="2.2" rx="1.1" opacity="0.13"/>
+  </g>
+
+  <!-- ── A glow layer ── -->
+  <g filter="url(#blur)" opacity="0.45" fill="none"
+     stroke="#22d3ee" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="34"  y1="160" x2="100" y2="34" stroke-width="15"/>
+    <line x1="166" y1="160" x2="100" y2="34" stroke-width="15"/>
+    <line x1="61"  y1="108" x2="139" y2="108" stroke-width="11"/>
+  </g>
+
+  <!-- ── A crisp layer ── -->
+  <g fill="none" stroke="url(#aCol)" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="34"  y1="160" x2="100" y2="34" stroke-width="14"/>
+    <line x1="166" y1="160" x2="100" y2="34" stroke-width="14"/>
+    <line x1="61"  y1="108" x2="139" y2="108" stroke-width="10"/>
+  </g>
+
+  <!-- ── Base corner dots (files being collected) ── -->
+  <circle cx="34"  cy="160" r="5" fill="#6366f1" opacity="0.55"/>
+  <circle cx="166" cy="160" r="5" fill="#6366f1" opacity="0.55"/>
+
+  <!-- ── Apex: outer halo ── -->
+  <circle cx="100" cy="34" r="16" fill="#06b6d4" opacity="0.18" filter="url(#halo)"/>
+  <!-- ── Apex: glow ring ── -->
+  <circle cx="100" cy="34" r="10" fill="#06b6d4" opacity="0.25" filter="url(#blur)"/>
+  <!-- ── Apex: solid dot ── -->
+  <circle cx="100" cy="34" r="7"  fill="#06b6d4"/>
+  <!-- ── Apex: white core ── -->
+  <circle cx="100" cy="34" r="3.2" fill="white" opacity="0.92"/>
+
+</svg>
