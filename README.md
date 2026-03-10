@@ -1,6 +1,6 @@
 ﻿<div align="center">
 
-<img src="assets/logo.svg" alt="ACTO Logo" width="120" />
+<img src="assets/logo.jpg" alt="ACTO Logo" width="120" />
 
 # ACTO
 
