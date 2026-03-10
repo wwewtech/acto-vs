@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/acto-dev/acto-vs/main/assets/logo.png" alt="ACTO Logo" width="120" />
+<img src="assets/logo.svg" alt="ACTO Logo" width="120" />
 
 # ACTO
 
