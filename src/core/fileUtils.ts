@@ -16,7 +16,7 @@ function isBinaryFile(buffer: Buffer): boolean {
   const sample = buffer.subarray(0, sampleSize);
   let nullCount = 0;
   for (let i = 0; i < sample.length; i++) {
-    if (sample[i] === 0) nullCount++;
+    if (sample[i] === 0) {nullCount++;}
   }
   const nullPercentage = (nullCount / sample.length) * 100;
   return nullPercentage > 10;
@@ -53,11 +53,11 @@ function checkAmbiguousUnicode(text: string): { hasAmbiguous: boolean; chars: st
   ];
   for (const pattern of ambiguousPatterns) {
     const matches = text.match(pattern);
-    if (matches) ambiguousChars.push(...matches);
+    if (matches) {ambiguousChars.push(...matches);}
   }
   const mixedScriptPattern = /[\u4E00-\u9FFF\u3040-\u309F\u30A0-\u30FF]/g;
   const hasMixedScript = mixedScriptPattern.test(text);
-  if (hasMixedScript) ambiguousChars.push('mixed-scripts');
+  if (hasMixedScript) {ambiguousChars.push('mixed-scripts');}
   return {
     hasAmbiguous: ambiguousChars.length > 0,
     chars: [...new Set(ambiguousChars)]

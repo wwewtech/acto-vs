@@ -1,82 +1,180 @@
-# ACTO — Code Context Collector
+<div align="center">
 
-Расширение VS Code, которое собирает выбранные файлы проекта в единый текстовый отчёт.  
-Удобно при работе с LLM (ChatGPT, Claude и т.д.) — вы передаёте весь нужный контекст одним файлом.
+<img src="https://raw.githubusercontent.com/acto-dev/acto-vs/main/assets/logo.png" alt="ACTO Logo" width="120" />
 
-## Возможности
+# ACTO
 
-- **Дерево файлов** в боковой панели с чекбоксами для каждого файла и папки
-- **Каскадное выделение** — клик на папке отмечает все вложенные файлы
-- **«Выделить всё» / «Снять выделение»** — кнопки на панели инструментов
-- **Автоматический пропуск бинарных файлов** (изображения, `.exe`, архивы и т.д.)
-- **Автоматический пропуск** `node_modules`, `.git`, `dist`, `out` и других служебных папок
-- **Остановка** сбора в любой момент — частичный результат всё равно сохраняется
-- Результат открывается в редакторе автоматически
+### Code Context Collector for VS Code
 
-## Использование
+**Собирай контекст проекта в один клик и передавай его в ChatGPT, Claude или любой другой LLM.**
 
-1. Откройте папку проекта в VS Code
-2. Нажмите иконку **ACTO** на панели активности (Activity Bar)
-3. Отметьте чекбоксами нужные файлы и/или папки
-4. Нажмите кнопку **▶ (Собрать отчёт)** на панели инструментов
-5. Файл `output.txt` откроется в соседней вкладке — скопируйте содержимое в LLM
+<br/>
 
-## Команды
+[![VS Code](https://img.shields.io/badge/VS%20Code-1.85%2B-007ACC?style=flat-square&logo=visualstudiocode&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=acto-dev.acto)
+[![Version](https://img.shields.io/badge/version-1.0.0-brightgreen?style=flat-square)](https://github.com/acto-dev/acto-vs/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
-| Команда | Описание |
-|---|---|
-| ACTO: Собрать отчёт | Запускает сбор выбранных файлов |
-| Выделить все | Отмечает все файлы проекта |
-| Снять выделение | Снимает все отметки |
-| Остановить парсинг | Прерывает текущий сбор |
+<br/>
 
-## Требования
-
-VS Code версии `1.101.0` или новее.
-
-## Известные ограничения
-
-- Файл `output.txt` всегда сохраняется в корне открытого workspace
-- Кодировка результата — UTF-8
-
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+</div>
 
 ---
 
-## Following extension guidelines
+## Зачем это нужно?
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+Когда вы работаете с большими языковыми моделями (ChatGPT, Claude, Gemini...), вам часто нужно передать им контекст вашего кода. Копировать файлы вручную — долго и неудобно.
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+**ACTO** решает эту задачу: выберите нужные файлы в дереве проекта, нажмите одну кнопку — и получите готовый отчёт с деревом структуры и полным содержимым всех файлов.
 
-## Working with Markdown
+---
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+## ✨ Возможности
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+| | |
+|---|---|
+| 📂 **Дерево файлов** | Удобная боковая панель с чекбоксами для каждого файла и папки |
+| ☑️ **Каскадное выделение** | Клик на папке мгновенно отмечает все вложенные файлы |
+| ⚡ **Выделить всё / Снять** | Кнопки на панели инструментов для массового выбора |
+| 🚫 **Умная фильтрация** | Автопропуск `node_modules`, `.git`, `dist`, бинарных файлов |
+| 🛑 **Остановка на лету** | Прервите сбор в любой момент — частичный результат сохранится |
+| 📊 **Подсчёт токенов** | Оценка количества токенов прямо в статус-баре |
+| 📋 **Копирование в буфер** | Один клик — и контекст уже в буфере обмена |
+| 🗂️ **ASCII-дерево** | Отчёт включает наглядную структуру файлов проекта |
 
-## For more information
+---
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+## 🚀 Быстрый старт
 
-**Enjoy!**
+### Установка
+
+**Через Marketplace:**
+
+1. Откройте VS Code
+2. Перейдите в Extensions (`Ctrl+Shift+X`)
+3. Найдите **ACTO** и нажмите Install
+
+**Вручную (VSIX):**
+
+```bash
+code --install-extension acto-1.0.0.vsix
+```
+
+### Использование
+
+```
+1. Откройте папку проекта в VS Code
+2. Нажмите иконку ACTO на панели активности (левая боковая панель)
+3. Отметьте чекбоксами нужные файлы и/или папки
+4. Нажмите ▶ (Собрать отчёт)
+5. output.txt откроется автоматически — скопируйте содержимое в LLM
+```
+
+---
+
+## 📖 Формат отчёта
+
+Сгенерированный файл содержит:
+
+```
+Generated by ACTO | 2025-03-10 14:32:05
+Files: 12 | Chars: 48 320 | ~Tokens: 12.1k
+════════════════════════════════════════
+
+Project structure:
+├── src/
+│   ├── extension.ts
+│   ├── parser.ts
+│   └── types.ts
+└── package.json
+
+════════════════════════════════════════
+
+[src/extension.ts]
+─────────────────
+import * as vscode from 'vscode';
+// ... полное содержимое файла
+```
+
+---
+
+## ⌨️ Команды
+
+| Команда | Горячая клавиша | Описание |
+|---|---|---|
+| `ACTO: Парсить выбранные файлы` | — | Запускает сбор и создаёт `output.txt` |
+| `ACTO: Скопировать в буфер` | — | Копирует результат без сохранения файла |
+| `Выделить все` | — | Отмечает все файлы проекта |
+| `Снять выделение` | — | Снимает все отметки |
+| `Остановить парсинг` | — | Прерывает текущий сбор |
+| `Обновить дерево` | — | Перечитывает структуру проекта |
+| `ACTO: Настройки` | — | Открывает страницу настроек |
+
+---
+
+## ⚙️ Настройки
+
+| Параметр | По умолчанию | Описание |
+|---|---|---|
+| `acto.ignoredFolders` | `["node_modules", ".git", "dist", ...]` | Папки, которые всегда пропускаются |
+| `acto.outputFileName` | `"output.txt"` | Имя файла результата |
+| `acto.maxFileSizeKb` | `512` | Максимальный размер одного файла (КБ) |
+
+---
+
+## 🏗️ Разработка
+
+```bash
+# Клонировать репозиторий
+git clone https://github.com/acto-dev/acto-vs.git
+cd acto-vs
+
+# Установить зависимости
+npm install
+
+# Запустить в режиме разработки
+npm run watch
+
+# Запустить тесты
+npm test
+```
+
+Расширение написано на **TypeScript** и собирается через **esbuild**.  
+Для отладки откройте проект в VS Code и нажмите `F5`.
+
+---
+
+## 🤝 Вклад в проект
+
+Будем рады любому вкладу! Вот как начать:
+
+1. Сделайте форк репозитория
+2. Создайте ветку для фичи: `git checkout -b feature/amazing-feature`
+3. Закоммитьте изменения: `git commit -m 'Add amazing feature'`
+4. Запушьте ветку: `git push origin feature/amazing-feature`
+5. Откройте Pull Request
+
+Перед отправкой убедитесь, что тесты проходят: `npm test`
+
+---
+
+## 📋 Известные ограничения
+
+- Файл `output.txt` сохраняется в корне открытого workspace
+- Кодировка результата — UTF-8
+
+---
+
+## 📄 Лицензия
+
+Распространяется под лицензией **MIT**. Подробнее см. в файле [LICENSE](LICENSE).
+
+---
+
+<div align="center">
+
+Сделано с ❤️ для разработчиков, которые используют AI в работе
+
+[Сообщить об ошибке](https://github.com/acto-dev/acto-vs/issues) · [Предложить фичу](https://github.com/acto-dev/acto-vs/issues) · [Marketplace](https://marketplace.visualstudio.com/items?itemName=acto-dev.acto)
+
+</div>
