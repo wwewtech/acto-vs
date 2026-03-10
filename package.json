@@ -3,15 +3,15 @@
   "displayName": "ACTO",
   "description": "Собирает выбранные файлы проекта в единый текстовый отчёт — удобно при работе с LLM.",
   "version": "1.0.0",
-  "publisher": "acto-dev",
+  "publisher": "wwewtech",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/acto-dev/acto-vs"
+    "url": "https://github.com/wwewtech/acto-vs"
   },
-  "homepage": "https://github.com/acto-dev/acto-vs#readme",
+  "homepage": "https://github.com/wwewtech/acto-vs#readme",
   "bugs": {
-    "url": "https://github.com/acto-dev/acto-vs/issues"
+    "url": "https://github.com/wwewtech/acto-vs/issues"
   },
   "keywords": [
     "llm",

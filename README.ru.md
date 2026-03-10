@@ -10,8 +10,8 @@
 
 <br/>
 
-[![VS Code](https://img.shields.io/badge/VS%20Code-1.85%2B-007ACC?style=flat-square&logo=visualstudiocode&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=acto-dev.acto)
-[![Version](https://img.shields.io/badge/version-1.0.0-brightgreen?style=flat-square)](https://github.com/acto-dev/acto-vs/releases)
+[![VS Code](https://img.shields.io/badge/VS%20Code-1.85%2B-007ACC?style=flat-square&logo=visualstudiocode&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=wwewtech.acto)
+[![Version](https://img.shields.io/badge/version-1.0.0-brightgreen?style=flat-square)](https://github.com/wwewtech/acto-vs/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
@@ -126,7 +126,7 @@ import * as vscode from 'vscode';
 
 ```bash
 # Клонировать репозиторий
-git clone https://github.com/acto-dev/acto-vs.git
+git clone https://github.com/wwewtech/acto-vs.git
 cd acto-vs
 
 # Установить зависимости
@@ -175,6 +175,6 @@ npm test
 
 Сделано с ❤️ для разработчиков, которые используют AI в работе
 
-[Сообщить об ошибке](https://github.com/acto-dev/acto-vs/issues) · [Предложить фичу](https://github.com/acto-dev/acto-vs/issues) · [Marketplace](https://marketplace.visualstudio.com/items?itemName=acto-dev.acto)
+[Сообщить об ошибке](https://github.com/wwewtech/acto-vs/issues) · [Предложить фичу](https://github.com/wwewtech/acto-vs/issues) · [Marketplace](https://marketplace.visualstudio.com/items?itemName=wwewtech.acto)
 
 </div>
