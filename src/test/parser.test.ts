@@ -126,6 +126,8 @@ suite('parser › ActoParser — binary detection', () => {
         assert.strictEqual(result.stats.skippedBinary, 1, 'binary file must be counted as skipped');
         assert.strictEqual(result.stats.processedFiles, 0, 'no text files processed');
         assert.strictEqual(result.cancelled, false);
+        assert.ok(result.report.includes('ПРОПУЩЕННЫЕ БИНАРНЫЕ ФАЙЛЫ'));
+        assert.ok(result.report.includes('- binary.bin'));
     });
 
     test('text file is processed and included in report', async () => {
@@ -140,6 +142,21 @@ suite('parser › ActoParser — binary detection', () => {
         assert.ok(result.report.includes('hello.ts'),  'report should mention filename');
         assert.ok(result.report.includes('```typescript'), 'report should have TypeScript fence');
         assert.ok(result.report.includes('greeting'),  'report should contain file content');
+    });
+
+    test('png file is skipped as binary', async () => {
+        const pngPath = path.join(tmpDir, 'image.png');
+        const pngHeader = Buffer.from([
+            0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A,
+            0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52
+        ]);
+        fss.writeFileSync(pngPath, pngHeader);
+
+        const parser = new ActoParser([pngPath], tmpDir);
+        const result = await parser.run(() => {});
+
+        assert.strictEqual(result.stats.skippedBinary, 1);
+        assert.strictEqual(result.stats.processedFiles, 0);
     });
 });
 

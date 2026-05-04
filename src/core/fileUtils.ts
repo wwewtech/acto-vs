@@ -11,6 +11,21 @@ export interface FileAnalysisResult {
   reason?: string;
 }
 
+const BINARY_EXTENSIONS = new Set([
+  '.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp', '.tiff', '.ico', '.icns',
+  '.mp3', '.wav', '.flac', '.ogg', '.m4a', '.aac',
+  '.mp4', '.mov', '.avi', '.mkv', '.webm',
+  '.zip', '.rar', '.7z', '.tar', '.gz', '.bz2', '.xz', '.zst', '.tgz',
+  '.pdf', '.exe', '.dll', '.so', '.dylib', '.bin', '.dat', '.iso', '.jar',
+  '.class', '.pyc', '.pyo', '.woff', '.woff2', '.ttf', '.otf', '.eot',
+  '.psd', '.ai', '.sketch', '.fig'
+]);
+
+function hasBinaryExtension(filePath: string): boolean {
+  const ext = path.extname(filePath).toLowerCase();
+  return ext.length > 0 && BINARY_EXTENSIONS.has(ext);
+}
+
 function isBinaryFile(buffer: Buffer): boolean {
   const sampleSize = Math.min(buffer.length, 1024);
   const sample = buffer.subarray(0, sampleSize);
@@ -66,6 +81,16 @@ function checkAmbiguousUnicode(text: string): { hasAmbiguous: boolean; chars: st
 
 export async function analyzeFile(filePath: string): Promise<FileAnalysisResult> {
   try {
+    if (hasBinaryExtension(filePath)) {
+      return {
+        isBinary: true,
+        encoding: 'binary',
+        hasAmbiguousUnicode: false,
+        ambiguousChars: [],
+        canDisplay: false,
+        reason: 'Файл имеет бинарное расширение и пропущен'
+      };
+    }
     const uri = vscode.Uri.file(filePath);
     const buffer = Buffer.from(await vscode.workspace.fs.readFile(uri));
     const sampleBuffer = buffer.subarray(0, Math.min(buffer.length, 1024));
@@ -125,18 +150,10 @@ export async function readFileWithAnalysis(filePath: string): Promise<{
     const analysis = await analyzeFile(filePath);
     const uri = vscode.Uri.file(filePath);
     if (analysis.isBinary) {
-      const buffer = Buffer.from(await vscode.workspace.fs.readFile(uri));
-      const binaryContent = buffer.toString('latin1')
-        .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, '')
-        .replace(/\x00/g, '');
       return {
-        success: true,
-        content: binaryContent,
-        analysis: {
-          ...analysis,
-          canDisplay: true,
-          reason: 'Бинарный файл отображается как текст (непечатные символы заменены)'
-        }
+        success: false,
+        analysis,
+        error: analysis.reason || 'Бинарный файл пропущен'
       };
     }
     if (!analysis.canDisplay) {

@@ -62,7 +62,10 @@ export function activate(context: vscode.ExtensionContext) {
         const fsWatcher = vscode.workspace.createFileSystemWatcher(
             new vscode.RelativePattern(rootPath, '**/*')
         );
-        const debouncedRefresh = debounce(() => projectTreeProvider.refresh(), 600);
+        const debouncedRefresh = debounce(() => {
+            projectTreeProvider.invalidateDirStats();
+            projectTreeProvider.refresh();
+        }, 600);
         context.subscriptions.push(
             fsWatcher,
             fsWatcher.onDidCreate(debouncedRefresh),
@@ -185,7 +188,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     // --- Команда: переключить чекбокс (legacy) ---
     const toggleCommand = vscode.commands.registerCommand('acto.toggleCheckbox', (item: FileNode) => {
-        projectTreeProvider.toggleCheckbox(item);
+        return projectTreeProvider.toggleCheckbox(item);
     });
 
     // --- Команда: выделить все ---
@@ -235,6 +238,7 @@ export function activate(context: vscode.ExtensionContext) {
     // Обновляем дерево при изменении настроек
     const configWatcher = vscode.workspace.onDidChangeConfiguration((e) => {
         if (e.affectsConfiguration('acto.ignoredNames')) {
+            projectTreeProvider.invalidateDirStats();
             projectTreeProvider.refresh();
         }
     });

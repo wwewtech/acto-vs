@@ -40,79 +40,93 @@ suite('ProjectTreeProvider › initial state', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 suite('ProjectTreeProvider › toggleCheckbox (files)', () => {
 
-    test('checking a file increases count by 1', () => {
+    test('checking a file increases count by 1', async () => {
         const provider = new ProjectTreeProvider('/root');
         const file = makeFile('/root/index.ts');
-        provider.toggleCheckbox(file);
+        await provider.toggleCheckbox(file);
         assert.strictEqual(provider.getCheckedFilesCount(), 1);
     });
 
-    test('un-checking a file decreases count back to 0', () => {
+    test('un-checking a file decreases count back to 0', async () => {
         const provider = new ProjectTreeProvider('/root');
         const file = makeFile('/root/index.ts');
-        provider.toggleCheckbox(file); // check
-        provider.toggleCheckbox(file); // uncheck
+        await provider.toggleCheckbox(file); // check
+        await provider.toggleCheckbox(file); // uncheck
         assert.strictEqual(provider.getCheckedFilesCount(), 0);
     });
 
-    test('multiple distinct files are counted correctly', () => {
+    test('multiple distinct files are counted correctly', async () => {
         const provider = new ProjectTreeProvider('/root');
-        provider.toggleCheckbox(makeFile('/root/a.ts'));
-        provider.toggleCheckbox(makeFile('/root/b.ts'));
-        provider.toggleCheckbox(makeFile('/root/c.ts'));
+        await provider.toggleCheckbox(makeFile('/root/a.ts'));
+        await provider.toggleCheckbox(makeFile('/root/b.ts'));
+        await provider.toggleCheckbox(makeFile('/root/c.ts'));
         assert.strictEqual(provider.getCheckedFilesCount(), 3);
     });
 
-    test('toggling the same file twice is idempotent (net zero)', () => {
+    test('toggling the same file twice is idempotent (net zero)', async () => {
         const provider = new ProjectTreeProvider('/root');
         const file = makeFile('/root/a.ts');
-        provider.toggleCheckbox(file);
-        provider.toggleCheckbox(file);
+        await provider.toggleCheckbox(file);
+        await provider.toggleCheckbox(file);
         assert.strictEqual(provider.getCheckedFilesCount(), 0);
         assert.deepStrictEqual(provider.getCheckedItems(), []);
     });
 
-    test('getCheckedItems returns paths of checked files', () => {
+    test('getCheckedItems returns paths of checked files', async () => {
         const provider = new ProjectTreeProvider('/root');
         const fa = makeFile('/root/a.ts');
         const fb = makeFile('/root/b.ts');
-        provider.toggleCheckbox(fa);
-        provider.toggleCheckbox(fb);
+        await provider.toggleCheckbox(fa);
+        await provider.toggleCheckbox(fb);
         const items = provider.getCheckedItems().sort();
         assert.deepStrictEqual(items, ['/root/a.ts', '/root/b.ts'].sort());
     });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// toggleCheckbox — directories (do NOT count as files)
+// toggleCheckbox — directories (cascade selection)
 // ─────────────────────────────────────────────────────────────────────────────
 suite('ProjectTreeProvider › toggleCheckbox (directories)', () => {
 
-    test('checking a directory does NOT add to file count', () => {
-        const provider = new ProjectTreeProvider('/root');
-        const dir = makeDir('/root/src');
-        provider.toggleCheckbox(dir);
-        // Directory itself is in checkedItems but NOT counted as file
-        assert.strictEqual(provider.getCheckedFilesCount(), 0,
-            'directory should not be counted in file count');
+    let tmpDir: string;
+
+    setup(() => {
+        tmpDir = fss.mkdtempSync(path.join(os.tmpdir(), 'acto-tree-'));
+        fss.mkdirSync(path.join(tmpDir, 'subdir'));
+        fss.writeFileSync(path.join(tmpDir, 'root.ts'),        'const a = 1;\n', 'utf8');
+        fss.writeFileSync(path.join(tmpDir, 'extra.ts'),       'const x = 42;\n', 'utf8');
+        fss.writeFileSync(path.join(tmpDir, 'subdir', 'b.ts'), 'const b = 2;\n', 'utf8');
+        fss.writeFileSync(path.join(tmpDir, 'subdir', 'c.ts'), 'const c = 3;\n', 'utf8');
     });
 
-    test('unchecking a directory removes it from checked set', () => {
-        const provider = new ProjectTreeProvider('/root');
-        const dir = makeDir('/root/src');
-        provider.toggleCheckbox(dir); // check
-        provider.toggleCheckbox(dir); // uncheck
+    teardown(() => {
+        fss.rmSync(tmpDir, { recursive: true, force: true });
+    });
+
+    test('checking a directory selects its child files', async () => {
+        const provider = new ProjectTreeProvider(tmpDir);
+        const dir = makeDir(path.join(tmpDir, 'subdir'));
+        await provider.toggleCheckbox(dir);
+        assert.strictEqual(provider.getCheckedFilesCount(), 2,
+            'directory should select files in its subtree');
+    });
+
+    test('unchecking a directory clears its child files', async () => {
+        const provider = new ProjectTreeProvider(tmpDir);
+        const dir = makeDir(path.join(tmpDir, 'subdir'));
+        await provider.toggleCheckbox(dir); // check
+        await provider.toggleCheckbox(dir); // uncheck
         assert.strictEqual(provider.getCheckedFilesCount(), 0);
-        // The dir path should not be in checkedItems at all
-        assert.ok(!provider.getCheckedItems().includes('/root/src'));
+        const items = provider.getCheckedItems();
+        assert.ok(!items.some(p => p.endsWith(path.join('subdir', 'b.ts'))));
     });
 
-    test('mixed: 1 dir + 2 files → file count is 2', () => {
-        const provider = new ProjectTreeProvider('/root');
-        provider.toggleCheckbox(makeDir('/root/lib'));
-        provider.toggleCheckbox(makeFile('/root/index.ts'));
-        provider.toggleCheckbox(makeFile('/root/utils.ts'));
-        assert.strictEqual(provider.getCheckedFilesCount(), 2);
+    test('mixed: dir + 2 files → file count includes all files', async () => {
+        const provider = new ProjectTreeProvider(tmpDir);
+        await provider.toggleCheckbox(makeDir(path.join(tmpDir, 'subdir')));
+        await provider.toggleCheckbox(makeFile(path.join(tmpDir, 'root.ts')));
+        await provider.toggleCheckbox(makeFile(path.join(tmpDir, 'extra.ts')));
+        assert.strictEqual(provider.getCheckedFilesCount(), 4);
     });
 });
 
@@ -121,11 +135,10 @@ suite('ProjectTreeProvider › toggleCheckbox (directories)', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 suite('ProjectTreeProvider › deselectAll', () => {
 
-    test('clears all checked files', () => {
+    test('clears all checked files', async () => {
         const provider = new ProjectTreeProvider('/root');
-        provider.toggleCheckbox(makeFile('/root/a.ts'));
-        provider.toggleCheckbox(makeFile('/root/b.ts'));
-        provider.toggleCheckbox(makeDir('/root/lib'));
+        await provider.toggleCheckbox(makeFile('/root/a.ts'));
+        await provider.toggleCheckbox(makeFile('/root/b.ts'));
 
         provider.deselectAll();
 
@@ -145,24 +158,23 @@ suite('ProjectTreeProvider › deselectAll', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 suite('ProjectTreeProvider › onSelectionChanged event', () => {
 
-    test('fires with correct count when file checked', done => {
+    test('fires with correct count when file checked', async () => {
         const provider = new ProjectTreeProvider('/root');
-        provider.onSelectionChanged((count: number) => {
-            assert.strictEqual(count, 1);
-            done();
-        });
-        provider.toggleCheckbox(makeFile('/root/a.ts'));
+        let seen = -1;
+        provider.onSelectionChanged((count: number) => { seen = count; });
+        await provider.toggleCheckbox(makeFile('/root/a.ts'));
+        assert.strictEqual(seen, 1);
     });
 
-    test('fires with 0 after deselectAll', done => {
+    test('fires with 0 after deselectAll', async () => {
         const provider = new ProjectTreeProvider('/root');
-        provider.toggleCheckbox(makeFile('/root/a.ts'));
-        provider.toggleCheckbox(makeFile('/root/b.ts'));
+        await provider.toggleCheckbox(makeFile('/root/a.ts'));
+        await provider.toggleCheckbox(makeFile('/root/b.ts'));
 
-        provider.onSelectionChanged((count: number) => {
-            if (count === 0) { done(); }
-        });
+        let seen = -1;
+        provider.onSelectionChanged((count: number) => { seen = count; });
         provider.deselectAll();
+        assert.strictEqual(seen, 0);
     });
 });
 
@@ -197,9 +209,10 @@ suite('ProjectTreeProvider › getTreeItem', () => {
     test('checked file has Checked checkbox state', () => {
         const provider = new ProjectTreeProvider('/root');
         const file = makeFile('/root/a.ts');
-        provider.toggleCheckbox(file);
-        const item = provider.getTreeItem(file);
-        assert.strictEqual(item.checkboxState, vscode.TreeItemCheckboxState.Checked);
+        return provider.toggleCheckbox(file).then(() => {
+            const item = provider.getTreeItem(file);
+            assert.strictEqual(item.checkboxState, vscode.TreeItemCheckboxState.Checked);
+        });
     });
 
     test('file item has open-file command', () => {
@@ -283,6 +296,23 @@ suite('ProjectTreeProvider › setCascade (filesystem)', () => {
         const items = provider.getCheckedItems();
         assert.ok(!items.includes(path.join(tmpDir, 'subdir', 'b.ts')));
         assert.ok(!items.includes(path.join(tmpDir, 'subdir', 'c.ts')));
+    });
+
+    test('unchecking a single child keeps siblings checked and marks dir partial', async () => {
+        const provider = new ProjectTreeProvider(tmpDir);
+        const dir = makeDir(path.join(tmpDir, 'subdir'));
+        const bFile = makeFile(path.join(tmpDir, 'subdir', 'b.ts'));
+
+        await provider.setCascade(dir, true);
+        await provider.setCascade(bFile, false);
+
+        const items = provider.getCheckedItems();
+        assert.ok(!items.includes(path.join(tmpDir, 'subdir', 'b.ts')));
+        assert.ok(items.includes(path.join(tmpDir, 'subdir', 'c.ts')));
+
+        const item = provider.getTreeItem(dir);
+        assert.strictEqual(item.checkboxState, vscode.TreeItemCheckboxState.Unchecked);
+        assert.strictEqual(item.description, '1/2');
     });
 
     test('selectAll marks all files in workspace root', async () => {

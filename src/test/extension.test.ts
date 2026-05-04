@@ -1,24 +1,26 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 
+const EXTENSION_ID = 'wwewtech.acto';
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Extension activation
 // ─────────────────────────────────────────────────────────────────────────────
 suite('extension › activation', () => {
 
     test('extension is present in the list of installed extensions', () => {
-        const ext = vscode.extensions.getExtension('acto-dev.acto');
+        const ext = vscode.extensions.getExtension(EXTENSION_ID);
         // In the test runner the extension is loaded by id from package.json
         // If running outside the test sandbox it may be undefined — skip gracefully.
         if (!ext) {
-            console.warn('acto-dev.acto extension not found via getExtension — skipping');
+            console.warn(`${EXTENSION_ID} extension not found via getExtension — skipping`);
             return;
         }
         assert.ok(ext, 'extension must be registered');
     });
 
     test('extension activates without throwing', async () => {
-        const ext = vscode.extensions.getExtension('acto-dev.acto');
+        const ext = vscode.extensions.getExtension(EXTENSION_ID);
         if (!ext) { return; }
         try {
             await ext.activate();
@@ -48,10 +50,14 @@ suite('extension › command registration', () => {
 
     let registeredCommands: string[];
 
-    setup(async () => {
+    setup(async function () {
         // Activate extension so commands are registered
-        const ext = vscode.extensions.getExtension('acto-dev.acto');
-        if (ext && !ext.isActive) { await ext.activate(); }
+        const ext = vscode.extensions.getExtension(EXTENSION_ID);
+        if (!ext) {
+            this.skip();
+            return;
+        }
+        if (!ext.isActive) { await ext.activate(); }
         registeredCommands = await vscode.commands.getCommands(true);
     });
 
@@ -71,7 +77,7 @@ suite('extension › command registration', () => {
 suite('extension › commands smoke-test', () => {
 
     setup(async () => {
-        const ext = vscode.extensions.getExtension('acto-dev.acto');
+        const ext = vscode.extensions.getExtension(EXTENSION_ID);
         if (ext && !ext.isActive) { await ext.activate(); }
     });
 
@@ -109,7 +115,7 @@ suite('extension › commands smoke-test', () => {
 suite('extension › context keys', () => {
 
     setup(async () => {
-        const ext = vscode.extensions.getExtension('acto-dev.acto');
+        const ext = vscode.extensions.getExtension(EXTENSION_ID);
         if (ext && !ext.isActive) { await ext.activate(); }
     });
 

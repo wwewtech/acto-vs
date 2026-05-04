@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { readFileWithAnalysis } from './fileUtils';
 import { ParseResult, ParseStats } from './types';
 
 // --- Вспомогательные функции для построения дерева ---
@@ -104,16 +105,6 @@ export class ActoParser {
         this._cancelled = true;
     }
 
-    /** Проверяет бинарность по первым байтам (null-byte heuristic). */
-    private isBinaryContent(bytes: Uint8Array): boolean {
-        const sampleSize = Math.min(bytes.length, 512);
-        let nullCount = 0;
-        for (let i = 0; i < sampleSize; i++) {
-            if (bytes[i] === 0) { nullCount++; }
-        }
-        return sampleSize > 0 && nullCount / sampleSize >= 0.1;
-    }
-
     private filterFiles(files: string[]): string[] {
         return files.filter(file => {
             const parts = file.split(path.sep);
@@ -151,6 +142,7 @@ export class ActoParser {
         let filesSection = '';
         let totalChars = 0;
         let skippedBinary = 0;
+        const skippedBinaryFiles: string[] = [];
         let processedFiles = 0;
         let cancelled = false;
 
@@ -166,15 +158,17 @@ export class ActoParser {
             onProgress({ message: `(${i + 1}/${totalFiles}) ${relativePath}` });
 
             try {
-                const uri = vscode.Uri.file(filePath);
-                const contentBytes = await vscode.workspace.fs.readFile(uri);
-
-                if (this.isBinaryContent(contentBytes)) {
-                    skippedBinary++;
-                    continue;
+                const readResult = await readFileWithAnalysis(filePath);
+                if (!readResult.success) {
+                    if (readResult.analysis?.isBinary) {
+                        skippedBinary++;
+                        skippedBinaryFiles.push(relativePath);
+                        continue;
+                    }
+                    throw new Error(readResult.error || 'Неизвестная ошибка чтения файла');
                 }
 
-                const content = new TextDecoder('utf-8').decode(contentBytes);
+                const content = readResult.content ?? '';
                 const lang = getLanguageId(relativePath);
                 totalChars += content.length;
                 processedFiles++;
@@ -221,6 +215,14 @@ export class ActoParser {
             '',
         ].join('\n');
 
+        const binarySection = skippedBinaryFiles.length === 0 ? '' : [
+            '',
+            'ПРОПУЩЕННЫЕ БИНАРНЫЕ ФАЙЛЫ',
+            divider,
+            ...skippedBinaryFiles.map(p => `- ${p}`),
+            '',
+        ].join('\n');
+
         // --- Содержимое ---
         const contentHeader = [
             '',
@@ -237,7 +239,7 @@ export class ActoParser {
             divider,
         ].join('\n');
 
-        const report = header + structureSection + contentHeader + filesSection + footer;
+        const report = header + structureSection + binarySection + contentHeader + filesSection + footer;
 
         const stats: ParseStats = {
             totalFiles,
