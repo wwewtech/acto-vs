@@ -7,7 +7,7 @@
 ### Code Context Collector for VS Code
 
 [![VS Code](https://img.shields.io/badge/VS%20Code-1.85%2B-007ACC?style=flat-square&logo=visualstudiocode&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=wwewtech.acto)
-[![Version](https://img.shields.io/badge/version-1.0.0-brightgreen?style=flat-square)](https://github.com/wwewtech/acto-vs/releases)
+[![Version](https://img.shields.io/badge/version-1.0.1-brightgreen?style=flat-square)](https://github.com/wwewtech/acto-vs/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
 <br/>

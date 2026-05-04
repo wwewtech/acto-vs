@@ -2,7 +2,7 @@
   "name": "acto",
   "displayName": "ACTO",
   "description": "Собирает выбранные файлы проекта в единый текстовый отчёт — удобно при работе с LLM.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "wwewtech",
   "license": "MIT",
   "repository": {
